@@ -21,9 +21,16 @@ var (
 	ErrorCouldNotMarshalItem     = "could not marshal item"
 	ErrorCouldNotDeleteItem      = "could not delete item"
 	ErrorCouldNotDynamoPutItem   = "could not dynamo put item"
-	ErrorUserAlreadyExists       = "user.User already exists"
-	ErrorUserDoesNotExist        = "user.User does not exist"
+	ErrorUserAlreadyExists       = "user already exists"
+	ErrorUserDoesNotExist        = "user does not exist"
 )
+
+type DynamoDBAPI interface {
+	GetItem(ctx context.Context, params *dynamodb.GetItemInput, optFns ...func(*dynamodb.Options)) (*dynamodb.GetItemOutput, error)
+	PutItem(ctx context.Context, params *dynamodb.PutItemInput, optFns ...func(*dynamodb.Options)) (*dynamodb.PutItemOutput, error)
+	DeleteItem(ctx context.Context, params *dynamodb.DeleteItemInput, optFns ...func(*dynamodb.Options)) (*dynamodb.DeleteItemOutput, error)
+	Scan(ctx context.Context, params *dynamodb.ScanInput, optFns ...func(*dynamodb.Options)) (*dynamodb.ScanOutput, error)
+}
 
 type User struct {
 	Email     string `json:"email"`
@@ -31,7 +38,7 @@ type User struct {
 	LastName  string `json:"lastName"`
 }
 
-func FetchUser(ctx context.Context, email, tableName string, dynaClient *dynamodb.Client) (*User, error) {
+func FetchUser(ctx context.Context, email, tableName string, dynaClient DynamoDBAPI) (*User, error) {
 	input := &dynamodb.GetItemInput{
 		Key: map[string]types.AttributeValue{
 			"email": &types.AttributeValueMemberS{Value: email},
@@ -56,7 +63,7 @@ func FetchUser(ctx context.Context, email, tableName string, dynaClient *dynamod
 	return item, nil
 }
 
-func FetchUsers(ctx context.Context, tableName string, dynaClient *dynamodb.Client) (*[]User, error) {
+func FetchUsers(ctx context.Context, tableName string, dynaClient DynamoDBAPI) (*[]User, error) {
 	input := &dynamodb.ScanInput{
 		TableName: aws.String(tableName),
 	}
@@ -74,7 +81,7 @@ func FetchUsers(ctx context.Context, tableName string, dynaClient *dynamodb.Clie
 	return &items, nil
 }
 
-func CreateUser(ctx context.Context, req events.APIGatewayProxyRequest, tableName string, dynaClient *dynamodb.Client) (*User, error) {
+func CreateUser(ctx context.Context, req events.APIGatewayProxyRequest, tableName string, dynaClient DynamoDBAPI) (*User, error) {
 	var u User
 
 	if err := json.Unmarshal([]byte(req.Body), &u); err != nil {
@@ -106,7 +113,7 @@ func CreateUser(ctx context.Context, req events.APIGatewayProxyRequest, tableNam
 	return &u, nil
 }
 
-func UpdateUser(ctx context.Context, req events.APIGatewayProxyRequest, tableName string, dynaClient *dynamodb.Client) (*User, error) {
+func UpdateUser(ctx context.Context, req events.APIGatewayProxyRequest, tableName string, dynaClient DynamoDBAPI) (*User, error) {
 	var u User
 
 	if err := json.Unmarshal([]byte(req.Body), &u); err != nil {
@@ -135,7 +142,7 @@ func UpdateUser(ctx context.Context, req events.APIGatewayProxyRequest, tableNam
 	return &u, nil
 }
 
-func DeleteUser(ctx context.Context, email, tableName string, dynaClient *dynamodb.Client) error {
+func DeleteUser(ctx context.Context, email, tableName string, dynaClient DynamoDBAPI) error {
 	input := &dynamodb.DeleteItemInput{
 		Key: map[string]types.AttributeValue{
 			"email": &types.AttributeValueMemberS{Value: email},
