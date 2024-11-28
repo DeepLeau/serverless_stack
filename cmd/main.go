@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-
 	"github.com/DeepLeau/serverless_stack/pkg/handlers"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -30,10 +29,8 @@ func main() {
 	}
 	fmt.Printf("Configuration loaded for the region: %s\n", cfg.Region)
 
-	// Initialize DynamoDB client
 	dynaClient = dynamodb.NewFromConfig(cfg)
 
-	// Start Lambda handler
 	lambda.Start(handler)
 }
 
