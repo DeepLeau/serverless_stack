@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"github.com/DeepLeau/serverless_stack/pkg/dynamodb/dynamoapi"
 	"github.com/DeepLeau/serverless_stack/pkg/handlers"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -11,12 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 )
 
-type DynamoDBAPI interface {
-	GetItem(ctx context.Context, params *dynamodb.GetItemInput, optFns ...func(*dynamodb.Options)) (*dynamodb.GetItemOutput, error)
-	PutItem(ctx context.Context, params *dynamodb.PutItemInput, optFns ...func(*dynamodb.Options)) (*dynamodb.PutItemOutput, error)
-}
-
-var dynaClient DynamoDBAPI
+var dynaClient dynamoapi.DynamoDBAPI
 
 func main() {
 	region := os.Getenv("AWS_REGION")

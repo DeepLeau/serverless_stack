@@ -4,9 +4,9 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/DeepLeau/serverless-stack/pkg/user"
+	"github.com/DeepLeau/serverless_stack/pkg/user"
 	"github.com/aws/aws-lambda-go/events"
-	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	"github.com/DeepLeau/serverless_stack/pkg/dynamodb/dynamoapi"
 	"github.com/aws/aws-sdk-go-v2/aws"
 )
 
@@ -16,7 +16,7 @@ type ErrorBody struct {
 	ErrorMsg *string `json:"error,omitempty"`
 }
 
-func GetUser(req events.APIGatewayProxyRequest, tableName string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
+func GetUser(req events.APIGatewayProxyRequest, tableName string, dynaClient dynamoapi.DynamoDBAPI) (*events.APIGatewayProxyResponse, error) {
 	email := req.QueryStringParameters["email"]
 	if len(email) > 0 {
 		result, err := user.FetchUser(context.TODO(), email, tableName, dynaClient)
@@ -37,7 +37,7 @@ func GetUser(req events.APIGatewayProxyRequest, tableName string, dynaClient *dy
 	return apiResponse(http.StatusOK, result)
 }
 
-func CreateUser(req events.APIGatewayProxyRequest, tableName string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
+func CreateUser(req events.APIGatewayProxyRequest, tableName string, dynaClient dynamoapi.DynamoDBAPI) (*events.APIGatewayProxyResponse, error) {
 	result, err := user.CreateUser(context.TODO(), req, tableName, dynaClient)
 	if err != nil {
 		return apiResponse(http.StatusBadRequest, ErrorBody{
@@ -47,7 +47,7 @@ func CreateUser(req events.APIGatewayProxyRequest, tableName string, dynaClient 
 	return apiResponse(http.StatusCreated, result)
 }
 
-func UpdateUser(req events.APIGatewayProxyRequest, tableName string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
+func UpdateUser(req events.APIGatewayProxyRequest, tableName string, dynaClient dynamoapi.DynamoDBAPI) (*events.APIGatewayProxyResponse, error) {
 	result, err := user.UpdateUser(context.TODO(), req, tableName, dynaClient)
 	if err != nil {
 		return apiResponse(http.StatusBadRequest, ErrorBody{
@@ -57,7 +57,7 @@ func UpdateUser(req events.APIGatewayProxyRequest, tableName string, dynaClient 
 	return apiResponse(http.StatusOK, result)
 }
 
-func DeleteUser(req events.APIGatewayProxyRequest, tableName string, dynaClient *dynamodb.Client) (*events.APIGatewayProxyResponse, error) {
+func DeleteUser(req events.APIGatewayProxyRequest, tableName string, dynaClient dynamoapi.DynamoDBAPI) (*events.APIGatewayProxyResponse, error) {
 	email := req.QueryStringParameters["email"]
 	if len(email) == 0 {
 		return apiResponse(http.StatusBadRequest, ErrorBody{
