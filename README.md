@@ -98,6 +98,8 @@ Common error responses include:
 - ❓ `404 Not Found`: Resource not found.
 - ⚙️ `500 Internal Server Error`: Server-side issues.
 
+---
+
 # 🚀 Deployment on AWS
 
 Follow these steps to deploy the application on AWS Lambda and DynamoDB:
