@@ -104,7 +104,6 @@ Common error responses include:
 
 Follow these steps to deploy the application on AWS Lambda and DynamoDB:
 
----
 
 ## 🏗️ 1. Build the Go Application
 
