@@ -1,5 +1,5 @@
 
-# 🚀 AWS Lambda User Management with DynamoDB
+# ☁️ AWS Lambda User Management with DynamoDB
 
 This project demonstrates a serverless application for user management, built using AWS Lambda, DynamoDB, and Go. The application allows CRUD operations on user data stored in DynamoDB.
 
