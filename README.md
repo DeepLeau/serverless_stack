@@ -35,7 +35,7 @@ This project provides a scalable and serverless solution for managing user data.
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-repo/serverless-user-management.git
+   git clone https://github.com/DeepLeau/serverless_stack.git
    cd serverless-user-management
    ```
 
